@@ -36,13 +36,11 @@ log4js.configure({
 	appenders: {
 	  out: { type: 'stdout' },//设置是否在控制台打印日志
 	  info: { type: 'file', filename: './logs/info.log' },
-	  collect: { type: 'file', filename: './logs/collect-nike.log' },
-	  collect2: { type: 'file', filename: './logs/collect-tmall.log' },
-	  collect3: { type: 'file', filename: './logs/collect-jd.log' },
+	  ayalyse1: { type: 'file', filename: './logs/analyse1.log' },
 	  error: { type: 'file', filename: './logs/error.log' }
 	},
 	categories: {
-	  default: { appenders: [ 'out', 'info', 'collect', 'collect2','collect3','error' ], level: 'info' }//去掉'out'。控制台不打印日志
+	  default: { appenders: [ 'out', 'info', 'ayalyse1', 'error' ], level: 'info' }//去掉'out'。控制台不打印日志
 	}
   });
 
