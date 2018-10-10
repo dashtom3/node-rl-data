@@ -7,8 +7,14 @@ class Test{
         this.doTest()
     }
 
-    doTest(){
-      console.log('111')
+    async doTest(){
+        // setInterval(function(){
+            
+        // },1000)
+        const data = await DataModel.findOne({})
+        let lastdata = JSON.parse(data.data)
+        console.log(lastdata)
+
     }
     
 }
