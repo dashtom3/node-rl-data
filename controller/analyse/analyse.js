@@ -5,6 +5,7 @@ import logger from 'log4js'
 import dtime from 'time-formater'
 import xlsx  from 'node-xlsx'
 import fs from 'fs'
+import { start } from 'pm2';
 class Analyse{
     constructor() {
        
@@ -18,23 +19,50 @@ class Analyse{
       logger.getLogger('analyse').info('--开始分析数据--',pageNum,pageSize);
       
         const data = await DataModel.find({}).skip((pageNum-1)*pageSize).limit(pageSize)
+        // var data1 = eval('('+data+')')
         logger.getLogger('analyse').info('--数据读取成功--',pageNum,pageSize);
         data.forEach((item)=>{
-          // if(item.data.replace(/\s+/g,"")[2506] == ' '){
-          //   console.log('22222')
-          // }
-          // console.log(item.data.replace(/\s+/g,"").substr(2500,10),item.data.replace(/\s+/g,"")[2506],1,item.data.replace(/\s+/g,"")[2507])
+          
           try {
-            var tempData = JSON.parse(item.data)
-            // var tempData = JSON.parse(item.data.replace(/[\'\"\\\/\b\f\n\r\t]/g, ''))
+            
+          //   var startindex = item.data.indexOf('essid0')
+          //  if(startindex != -1){
+          //    var lastindex = item.data.indexOf("\",",startindex)
+          //    if(lastindex != -1){
+          //     //  console.log(item.data.substring(0,startindex-1))
+          //     var lastdata = item.data.substring(0,startindex-1)+item.data.substring(lastindex+2)
+          //      tempData = JSON.parse(lastdata.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
+          //    }
+          //  }else{
+          //    tempData = JSON.parse(item.data.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
+          //  }
+             var startindex = 0
+             var lastdata = item.data
+           while(lastdata.indexOf('essid',startindex) > 0){
+              var startnum = lastdata.indexOf('essid',startindex)
+              var lastnum = lastdata.indexOf("\",",startnum)
+               lastdata = lastdata.substring(0,startnum-1)+lastdata.substring(lastnum+2)
+              startindex = startnum
+           }
+          //  console.log(lastdata.substring(lastnum+2))
+        // var tempData = JSON.parse(lastdata)
+        // console.log(lastdata)
+        var tempData = JSON.parse(lastdata.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
+            // var tempData = JSON.parse(item.data.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
+          // console.log(tempData)
             var tempTime = new Date(tempData.time)
             tempData.data.forEach((single)=>{
               if(this.tempAll[single.mac]){
-                if(tempTime.getTime()-this.tempAll[single.mac][this.tempAll[single.mac].length-1][1].getTime()<=10*60*1000){
+                if(tempTime.getTime()-this.tempAll[single.mac][this.tempAll[single.mac].length-1][1].getTime()<=10*60*1000){ //10分钟间隔
                   this.tempAll[single.mac][this.tempAll[single.mac].length-1][1] = tempTime 
                   this.tempAll[single.mac][this.tempAll[single.mac].length-1][2] = (tempTime.getTime()-this.tempAll[single.mac][this.tempAll[single.mac].length-1][0].getTime())/1000
                 }else {
-                  this.tempAll[single.mac].push([tempTime,tempTime,0])
+                  if(this.tempAll[single.mac][this.tempAll[single.mac].length-1][2]<2*60){//用户待在这里小于2分钟就删除
+                    this.tempAll[single.mac][this.tempAll[single.mac].length-1] = [tempTime,tempTime,0]
+                  }else{
+                    this.tempAll[single.mac].push([tempTime,tempTime,0])
+                  }
+                  
                 }
               }else {
                 this.tempAll[single.mac] = [[tempTime,tempTime,0]]
@@ -42,6 +70,12 @@ class Analyse{
             })
           } catch (error) {
             logger.getLogger('error').error('--错误数据--',this.errorNum++);
+            // if(item.data[3100]){
+            //   console.log(lastdata.substr(3114,60),lastdata[3133],222,lastdata[3134],1,lastdata[3135],2)
+            // }
+            // console.log(item.data)
+            console.log(item._id,'错误id') 
+            console.log(error)
           }
         })
         if(pageNum <= allPage){
@@ -52,9 +86,7 @@ class Analyse{
           var temp = []
           for(var i=0;i<objKeys.length;i++){
             // console.log(objKeys[i]+" : "+tempAll[objKeys[i]]);
-            if(this.tempAll[objKeys[i]][0][2]>4){
-              temp.push([objKeys[i]].concat(this.tempAll[objKeys[i]]))
-            }else if(this.tempAll[objKeys[i]][1]){
+            if(this.tempAll[objKeys[i]][0][2]>2*60){
               temp.push([objKeys[i]].concat(this.tempAll[objKeys[i]]))
             }
           }
@@ -63,6 +95,7 @@ class Analyse{
           // console.log()
           
           var time = dtime().format('YYYY-MM-DD');
+          // console.log(time)
           fs.writeFileSync('数据'+time+'.xlsx',buffer);
         }
     }
