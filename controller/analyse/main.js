@@ -9,7 +9,7 @@ class Main{
     }
     startAnalyse(){
         this.analyse = new analyse()
-        this.test = new test()
+        // this.test = new test()
     }
 }
 export default new Main()

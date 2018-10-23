@@ -6,52 +6,41 @@ import dtime from 'time-formater'
 import xlsx  from 'node-xlsx'
 import fs from 'fs'
 import { start } from 'pm2';
+import path from 'path';
 class Analyse{
     constructor() {
-       
-        this.getData(1,300,1000)
+        
+        // this.getData(1,300,1000)
         this.errorNum = 0
         this.tempAll = {}
+        this.resultData = {}
+        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-27*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
+        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
+        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-2*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
+        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-21*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date().getTime()-20*60*60*1000).format('x'))),24*60*60*1000))
+        this.getFile()
       }
     async getData(pageNum,allPage,pageSize){
-      // var temp = '{"id":"00de6557","data":[{"mac":"78:11:dc:28:38:6a","rssi":"-81","router":"Xiaomi_403","range":"39.1"},{"mac":"88:5d:fb:6c:9e:27","rssi":"-67","router":"ChinaNet-5arf","range":"11.8"},{"mac":"ec:6c:9f:98:ec:7a","rssi":"-63","router":"BEERPLUS","range":"8.4"},{"mac":"c0:3f:0e:0b:48:4a","rssi":"-69","router":"WXYLYS2","range":"14.0"},{"mac":"70:62:b8:2f:06:8e","rssi":"-65","router":"BALI","range":"10.0"},{"mac":"78:31:2b:21:9b:d9","rssi":"-82","router":"ChinaNet-VVSV","range":"42.6"},{"mac":"14:6b:9c:5d:10:b1","rssi":"-80","range":"35.9"},{"mac":"94:d9:b3:23:fb:a9","rssi":"-83","router":"WXYLYS","range":"46.4"},{"mac":"80:89:17:46:51:73","rssi":"-94","range":"118.5"},{"mac":"08:10:7a:56:d5:3f","rssi":"-92","router":"802","range":"100.0"},{"mac":"0c:6a:bc:59:92:ad","rssi":"-90","router":"ChinaNet-vgwS","range":"84.3"},{"mac":"18:e2:9f:46:55:68","rssi":"-81","ts":"WXYLYS","tmc":"94:d9:b3:23:fb:a9","tc":"N","range":"39.1"},{"mac":"c4:12:f5:7e:62:fc","rssi":"-79","router":"0701","range":"33.0"},{"mac":"94:77:2b:98:b4:00","rssi":"-71","router":"ChinaNet-wQSK","range":"16.6"},{"mac":"e4:f3:f5:a2:1a:be","rssi":"-81","rssi1":"-84","rssi2":"-84","router":"8012","range":"39.1"},{"mac":"40:c6:2a:7f:32:21","rssi":"-81","range":"39.1"},{"mac":"da:a1:19:0a:19:fd","rssi":"-77","range":"27.8"},{"mac":"ec:8a:c7:01:5c:9d","rssi":"-82","router":"ChinaNet-vWJq","range":"42.6"},{"mac":"dc:da:80:81:e2:23","rssi":"-59","tmc":"9c:4f:da:5d:2b:11","router":"H3","range":"5.9"},{"mac":"88:e6:28:39:9e:cd","rssi":"-66","rssi1":"-67","rssi2":"-66","rssi3":"-66","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"N","range":"10.8"},{"mac":"44:04:44:76:bc:d1","rssi":"-68","rssi1":"-69","rssi2":"-69","rssi3":"-69","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"12.9"},{"mac":"10:44:00:e1:bc:b8","rssi":"-46","rssi1":"-52","rssi2":"-50","rssi3":"-51","tmc":"44:04:44:76:bc:d1","router":"VIP88888","range":"1.9"},{"mac":"88:e6:28:39:a1:57","rssi":"-55","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"N","range":"4.2"},{"mac":"94:d9:b3:24:09:32","rssi":"-67","router":"WXYLYS","range":"11.8"},{"mac":"ec:6c:9f:98:ec:7d","rssi":"-54","router":"BEERPLUS","range":"3.9"},{"mac":"10:44:00:e1:bc:b9","rssi":"-48","range":"2.3"},{"mac":"0c:25:76:07:b2:9c","rssi":"-81","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","ds":"Y","range":"39.1"},{"mac":"78:d3:8d:e3:ec:08","rssi":"-68","rssi1":"-68","rssi2":"-68","rssi3":"-68","router":"jian","range":"12.9"},{"mac":"88:d5:0c:ef:b0:e9","rssi":"-84","essid0":"e0g1366666","range":"50.5"},{"mac":"cc:b8:a8:50:31:36","rssi":"-80","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"35.9"},{"mac":"cc:b8:a8:50:22:b4","rssi":"-55","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"4.2"},{"mac":"cc:b8:a8:bf:a1:78","rssi":"-63","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"8.4"},{"mac":"54:27:1e:4e:4e:57","rssi":"-61","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"7.1"},{"mac":"40:31:3c:09:7c:df","rssi":"-51","router":"X","range":"3.0"},{"mac":"3c:bd:3e:26:67:f0","rssi":"-62","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"7.7"},{"mac":"10:44:00:e1:bd:75","rssi":"-49","range":"2.5"},{"mac":"28:a1:eb:f7:66:58","rssi":"-63","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"8.4"},{"mac":"10:44:00:e1:bd:74","rssi":"-49","tmc":"28:a1:eb:f2:9f:89","router":"VIP66666","range":"2.5"},{"mac":"3c:2e:f9:13:bb:af","rssi":"-54","rssi1":"-54","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"3.9"},{"mac":"70:d9:23:08:15:c4","rssi":"-60","rssi1":"-61","rssi2":"-60","rssi3":"-59","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"6.5"},{"mac":"ec:6c:9f:98:ec:80","rssi":"-71","router":"BEERPLUS","range":"16.6"},{"mac":"48:7d:2e:b2:4d:fa","rssi":"-73","router":"TOPPLUS2","range":"19.7"},{"mac":"00:01:36:59:04:f7","rssi":"-88","range":"71.0"},{"mac":"cc:b8:a8:4f:f4:0a","rssi":"-66","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"10.8"},{"mac":"f0:03:8c:d6:bb:b9","rssi":"-86","ts":"VIP88888","tmc":"10:44:00:e1:bc:b8","tc":"Y","range":"59.9"},{"mac":"c4:36:55:a6:8b:ca","rssi":"-64","router":"VIP66666-Plus","range":"9.1"},{"mac":"34:d7:12:9a:30:8b","rssi":"-77","ts":"BEERPLUS","tmc":"ec:6c:9f:98:ec:80","tc":"Y","ds":"Y","range":"27.8"},{"mac":"0c:25:76:05:54:03","rssi":"-72","ts":"VIP66666-Plus","tmc":"c4:36:55:a6:8b:ca","tc":"Y","ds":"Y","range":"18.1"},{"mac":"94:bf:2d:05:f8:aa","rssi":"-69","rssi1":"-68","ts":"VIP66666-Plus","tmc":"c4:36:55:a6:8b:ca","tc":"N","range":"14.0"},{"mac":"cc:b8:a8:50:61:0a","rssi":"-60","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"N","range":"6.5"},{"mac":"34:96:72:30:4c:42","rssi":"-83","tmc":"c0:cc:f8:cb:a4:7a","range":"46.4"},{"mac":"28:a1:eb:f8:f4:c1","rssi":"-48","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"2.3"},{"mac":"c6:36:55:06:8b:ca","rssi":"-56","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"4.6"},{"mac":"00:25:92:2c:44:a8","rssi":"-62","rssi1":"-61","rssi2":"-59","rssi3":"-61","ts":"VIP66666","tmc":"10:44:00:e1:bd:74","tc":"Y","range":"7.7"},{"mac":"78:11:dc:d5:e2:cf","rssi":"-79","tmc":"40:31:3c:07:8d:fd","range":"33.0"},{"mac":"7c:50:49:48:b9:2a","rssi":"-76","rssi1":"-78","rssi2":"-77","rssi3":"-78","ts":"BEERPLUS","tmc":"ec:6c:9f:98:ec:80","tc":"Y","essid0":"BEERPLUS","range":"25.5"}],"mmac":"14:6b:9c:de:65:57","rate":"2","time":"FriSep2817:14:282018","lat":"","lon":""}'
-      // console.log(temp.substr(2500,100))
       logger.getLogger('analyse').info('--开始分析数据--',pageNum,pageSize);
-      
-        const data = await DataModel.find({}).skip((pageNum-1)*pageSize).limit(pageSize)
-        // var data1 = eval('('+data+')')
-        logger.getLogger('analyse').info('--数据读取成功--',pageNum,pageSize);
-        data.forEach((item)=>{
-          
-          try {
-            
-          //   var startindex = item.data.indexOf('essid0')
-          //  if(startindex != -1){
-          //    var lastindex = item.data.indexOf("\",",startindex)
-          //    if(lastindex != -1){
-          //     //  console.log(item.data.substring(0,startindex-1))
-          //     var lastdata = item.data.substring(0,startindex-1)+item.data.substring(lastindex+2)
-          //      tempData = JSON.parse(lastdata.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
-          //    }
-          //  }else{
-          //    tempData = JSON.parse(item.data.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
-          //  }
-             var startindex = 0
-             var lastdata = item.data
-           while(lastdata.indexOf('essid',startindex) > 0){
-              var startnum = lastdata.indexOf('essid',startindex)
-              var lastnum = lastdata.indexOf("\",",startnum)
-               lastdata = lastdata.substring(0,startnum-1)+lastdata.substring(lastnum+2)
-              startindex = startnum
-           }
-          //  console.log(lastdata.substring(lastnum+2))
-        // var tempData = JSON.parse(lastdata)
-        // console.log(lastdata)
-        var tempData = JSON.parse(lastdata.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
-            // var tempData = JSON.parse(item.data.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
-          // console.log(tempData)
-            var tempTime = new Date(tempData.time)
-            tempData.data.forEach((single)=>{
+      const data = await DataModel.find({}).skip((pageNum-1)*pageSize).limit(pageSize)
+      logger.getLogger('analyse').info('--数据读取成功--',pageNum,pageSize);
+      data.forEach((item)=>{
+        try {
+          var startindex = 0
+          var lastdata = item.data
+          while(lastdata.indexOf('essid',startindex) > 0){
+            var startnum = lastdata.indexOf('essid',startindex)
+            var lastnum = lastdata.indexOf("\",",startnum)
+            if(lastnum == -1){
+              break;
+            }
+            lastdata = lastdata.substring(0,startnum-1)+lastdata.substring(lastnum+2)
+            startindex = startnum
+          }
+          var tempData = JSON.parse(lastdata.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
+          var tempTime = new Date(tempData.time)
+          tempData.data.forEach((single)=>{
+            if(parseInt(single.rssi)>-80){
               if(this.tempAll[single.mac]){
                 if(tempTime.getTime()-this.tempAll[single.mac][this.tempAll[single.mac].length-1][1].getTime()<=10*60*1000){ //10分钟间隔
                   this.tempAll[single.mac][this.tempAll[single.mac].length-1][1] = tempTime 
@@ -62,43 +51,159 @@ class Analyse{
                   }else{
                     this.tempAll[single.mac].push([tempTime,tempTime,0])
                   }
-                  
                 }
               }else {
                 this.tempAll[single.mac] = [[tempTime,tempTime,0]]
               }
+            }
+          })
+        } catch (error) {
+          logger.getLogger('error').error('--错误数据--',this.errorNum++);
+          // console.log(item._id,'错误id') 
+          // console.log(error)
+        }
+      })
+      if(pageNum <= allPage){
+        this.getData(pageNum+1,allPage,pageSize)
+      }else {
+        var objKeys = Object.keys(this.tempAll);
+        objKeys = objKeys.sort();//这里写所需要的规则
+        var temp = []
+        for(var i=0;i<objKeys.length;i++){
+          // console.log(objKeys[i]+" : "+tempAll[objKeys[i]]);
+          if(this.tempAll[objKeys[i]][0][2]>5*60){
+            temp.push([objKeys[i]].concat(this.tempAll[objKeys[i]]))
+          }
+        }
+        var excelTitle = ['用户','早餐时段（6:00-10:00）','早餐后（10:00-11:00）','午餐（11:00-14:00）','下午茶（14:00-17:00）','晚餐（17:00-20:00）','晚餐后（20:00-23:00)','深夜(23:00-3:00)','凌晨']
+        var analyseGap = []
+        var dateResult = {}
+        temp.forEach((item,index2)=>{
+          if(index2 == 0){
+            item.forEach((single,index)=>{
+              console.log(single(0),single(1))
+              console.log(this.finalAnalyse(single[0],single[1],single[2]))
             })
-          } catch (error) {
-            logger.getLogger('error').error('--错误数据--',this.errorNum++);
-            // if(item.data[3100]){
-            //   console.log(lastdata.substr(3114,60),lastdata[3133],222,lastdata[3134],1,lastdata[3135],2)
-            // }
-            // console.log(item.data)
-            console.log(item._id,'错误id') 
-            console.log(error)
           }
         })
-        if(pageNum <= allPage){
-          this.getData(pageNum+1,allPage,pageSize)
-        }else {
-          var objKeys = Object.keys(this.tempAll);
-          objKeys = objKeys.sort();//这里写所需要的规则
-          var temp = []
-          for(var i=0;i<objKeys.length;i++){
-            // console.log(objKeys[i]+" : "+tempAll[objKeys[i]]);
-            if(this.tempAll[objKeys[i]][0][2]>2*60){
-              temp.push([objKeys[i]].concat(this.tempAll[objKeys[i]]))
+        logger.getLogger('analyse').info('--数据分析结束--',temp.length);
+        var buffer = xlsx.build([{name: "mySheetName", data: temp}]);
+        
+        var time = dtime().format('YYYY-MM-DD');
+        fs.writeFileSync('数据'+time+'.xlsx',buffer);
+      }
+    }
+    getFile(){
+      // console.log()
+      const workSheetsFromFile = xlsx.parse(path.join(__dirname,'data.xlsx'));
+      var tempRes = {}
+      workSheetsFromFile.forEach(item=>{
+        item.data.forEach((single)=>{
+          single.forEach((sim,index)=>{
+            
+            if(index == 0) {
+              tempRes[sim] = {}
+            }else {
+              var tempQ = sim.split(',')
+              var tempK = this.finalAnalyse(new Date(tempQ[0]),new Date(tempQ[1]),tempQ[2])
+              for(var k in tempK){
+                if(tempRes[single[0]][k]){
+                  tempK[k].forEach((p,index)=>{
+                    if(p != ''){
+                      tempRes[single[0]][k][index] = tempRes[single[0]][k][index]==''?tempK[k][index]:[parseInt(tempRes[single[0]][k][index][0])+parseInt(tempK[k][index][0]),tempRes[single[0]][k][index][1]+','+tempK[k][index][1]]
+                    }
+                  })
+                }else {
+                  tempRes[single[0]][k] = tempK[k]
+                }
+              }
+              
+            }
+          })
+
+        })
+      })
+      var temp1 = ['2018-10-01','2018-10-02','2018-10-03','2018-10-04','2018-10-05','2018-10-06','2018-10-07']
+      var resultFinal = []
+      
+      temp1.forEach(item=>{
+        var temp2 = [['用户','凌晨(00:00~03:00)','凌晨(03:00~06:00)','早餐时段（6:00-10:00）','早餐后（10:00-11:00）','午餐（11:00-14:00）','下午茶（14:00-17:00）','晚餐（17:00-20:00）','晚餐后（20:00-23:00)','深夜(23:00-00:00)']]
+        for(var k in tempRes){
+          if(tempRes[k][item]){
+            if(parseInt(tempRes[k][item][1][0])<2000 || tempRes[k][item][1] == ''){    // 3~6点 小于 2000秒
+              temp2.push([k].concat(tempRes[k][item]))
             }
           }
-          console.log(Object.getOwnPropertyNames(this.tempAll).length)
-          var buffer = xlsx.build([{name: "mySheetName", data: temp}]);
-          // console.log()
-          
-          var time = dtime().format('YYYY-MM-DD');
-          // console.log(time)
-          fs.writeFileSync('数据'+time+'.xlsx',buffer);
         }
+        
+        resultFinal.push({name:item,data:temp2})
+      })
+      var buffer = xlsx.build(resultFinal);
+      
+      //var time = dtime().format('YYYY-MM-DD');
+      fs.writeFileSync('result1.xlsx',buffer);
     }
+    finalAnalyse(dateStart,dateEnd,time){
+      
+      // '早餐时段（6:00-10:00）','早餐后（10:00-11:00）','午餐（11:00-14:00）','下午茶（14:00-17:00）','晚餐（17:00-20:00）','晚餐后（20:00-23:00)','深夜(23:00-3:00)','凌晨']
+      var temp = [0,3,6,10,11,14,17,20,23]
+      var numStart,numEnd = 0 
+      var startStr = dtime(dateStart).format('YYYY-MM-DD')
+      var endStr = dtime(dateEnd).format('YYYY-MM-DD')
+      var res = {}
+      //
+      for(var i=0;i<temp.length;i++){
+        //   3:50 => i=1,2:50 i=0 
+        if(dateStart.getHours()>=temp[i]){
+          numStart = i
+        }
+        //   3:50 => i=1
+        if(dateEnd.getHours()>=temp[i]){
+          numEnd = i
+        }
+      }
+      var numDay = (dtime(endStr).format('x')-dtime(startStr).format('x'))/(24*60*60*1000)
+      if(numDay == 0 && numStart == numEnd){   //当就在一个时间段时
+        res[startStr]=['','','','','','','','','']
+        res[startStr][numStart] = [time,dtime(dateStart).format('HH:mm')+'~'+dtime(dateEnd).format('HH:mm')]
+        return res
+      }
+      var tempDay
+      res[startStr] = ['','','','','','','','','']
+      res[startStr][numStart] = [this.getTime(this.getDateFromH(startStr,temp[(numStart+1)%temp.length]),dateStart),dtime(dateStart).format('HH:mm')+'~'+temp[(numStart+1)%temp.length]]
+      for(var j=numStart+1;;j++){
+        //当前这个时间段是哪一天
+        tempDay = dtime(parseInt(dtime(startStr).format('x'))+parseInt(j/temp.length)*60*24*60*1000).format('YYYY-MM-DD')
+        //这天没有数据就新加这个数据
+        if(!res[tempDay]){
+          res[tempDay] =  ['','','','','','','','','']
+        }
+        //console.log(numDay,parseInt(j/temp.length),numStart,j%temp.length,numEnd)
+        if(numDay == parseInt(j/temp.length) && j%temp.length == numEnd){
+          if(res[tempDay][numEnd] == ''){
+            res[tempDay][numEnd] = [this.getTime(dateEnd,this.getDateFromH(tempDay,temp[j%temp.length])),temp[j%temp.length]+'~'+dtime(dateEnd).format('HH:mm')]
+          }else {
+            res[tempDay][numEnd] = [res[tempDay][numEnd][0]+this.getTime(dateEnd,this.getDateFromH(tempDay,temp[j%temp.length])),res[tempDay][numEnd][1]+','+temp[j%temp.length]+'~'+dtime(dateEnd).format('HH:mm')]
+          }
+          break;
+        }else {
+          var tempQ = j%temp.length == (temp.length-1)?1*60*60:(temp[(j+1)%temp.length]-temp[j%temp.length])*60*60
+          if(res[tempDay][j%temp.length] == ''){
+            res[tempDay][j%temp.length] = [tempQ,temp[j%temp.length]+'~'+temp[j%temp.length+1 == temp.length?0:j%temp.length+1]]
+          }else {
+            res[tempDay][j%temp.length] = [res[tempDay][j%temp.length][0]+tempQ,res[tempDay][j%temp.length][1]+','+temp[j%temp.length]+'~'+temp[j%temp.length+1 == temp.length?0:j%temp.length+1]]
+          }
+        } 
+      }
+      return res
+    }
+    getDateFromH(currentDay,h){
+      return new Date(parseInt(dtime(dtime(currentDay).format('YYYY-MM-DD')+' '+h+':00:00').format('x')))
+    }
+    getTime(date1,date2){
+      return (date1.getTime()-date2.getTime())/1000
+    } 
+
     
 }
 export default Analyse

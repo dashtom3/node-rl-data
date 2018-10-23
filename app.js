@@ -29,6 +29,7 @@ app.all('*', (req, res, next) => {
 	}
 });
 
+
 // app.use(Statistic.apiRecord)
 const MongoStore = connectMongo(session);
 
