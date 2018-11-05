@@ -18,9 +18,55 @@ class Analyse{
         //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
         //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-2*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
         //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-21*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date().getTime()-20*60*60*1000).format('x'))),24*60*60*1000))
-        this.getFile()
-      }
-    async getData(pageNum,allPage,pageSize){
+        this.getData(1,'2018-10-24 05:00:00','2018-10-25 05:00:00',1,5000)
+    }
+    async getData(id,fromDate,toDate,pageNum,pageSize){
+      logger.getLogger('analyse').info('--开始分析数据--',id,fromDate,toDate,pageNum,pageSize);
+      const data = await DataModel.find({id:id,time:{ $gte : dtime(fromDate).format('YYYY-MM-DD HH:mm:ss'), $lte : dtime(toDate).format('YYYY-MM-DD HH:mm:ss') }}).skip((pageNum-1)*pageSize).limit(pageSize)
+      
+    }
+    async analyseData(){
+      data.forEach((item)=>{
+        try {
+          var startindex = 0
+          var lastdata = item.data
+          while(lastdata.indexOf('essid',startindex) > 0){
+            var startnum = lastdata.indexOf('essid',startindex)
+            var lastnum = lastdata.indexOf("\",",startnum)
+            if(lastnum == -1){
+              break;
+            }
+            lastdata = lastdata.substring(0,startnum-1)+lastdata.substring(lastnum+2)
+            startindex = startnum
+          }
+          var tempData = JSON.parse(lastdata.replace(/[\u000b\u000e\u000f\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u001b\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\n\t\r\b\f]/g,''))
+          var tempTime = new Date(tempData.time)
+          tempData.data.forEach((single)=>{
+            if(parseInt(single.rssi)>-80){
+              if(this.tempAll[single.mac]){
+                if(tempTime.getTime()-this.tempAll[single.mac][this.tempAll[single.mac].length-1][1].getTime()<=10*60*1000){ //10分钟间隔
+                  this.tempAll[single.mac][this.tempAll[single.mac].length-1][1] = tempTime 
+                  this.tempAll[single.mac][this.tempAll[single.mac].length-1][2] = (tempTime.getTime()-this.tempAll[single.mac][this.tempAll[single.mac].length-1][0].getTime())/1000
+                }else {
+                  if(this.tempAll[single.mac][this.tempAll[single.mac].length-1][2]<2*60){//用户待在这里小于2分钟就删除
+                    this.tempAll[single.mac][this.tempAll[single.mac].length-1] = [tempTime,tempTime,0]
+                  }else{
+                    this.tempAll[single.mac].push([tempTime,tempTime,0])
+                  }
+                }
+              }else {
+                this.tempAll[single.mac] = [[tempTime,tempTime,0]]
+              }
+            }
+          })
+        } catch (error) {
+          logger.getLogger('error').error('--错误数据--',this.errorNum++);
+          // console.log(item._id,'错误id') 
+          // console.log(error)
+        }
+      })
+    }
+    async getData2(pageNum,allPage,pageSize){
       logger.getLogger('analyse').info('--开始分析数据--',pageNum,pageSize);
       const data = await DataModel.find({}).skip((pageNum-1)*pageSize).limit(pageSize)
       logger.getLogger('analyse').info('--数据读取成功--',pageNum,pageSize);

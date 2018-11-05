@@ -6,8 +6,7 @@ const Schema = mongoose.Schema;
 
 const dataSchema = new Schema({
 	id: Number,
-	data: String,
-	time:String,
+    type: Number,
 })
 
 const Data = mongoose.model('Data', dataSchema);
