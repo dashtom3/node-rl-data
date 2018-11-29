@@ -4,14 +4,14 @@ import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema;
 
-const dataSchema = new Schema({
+const wifiSchema = new Schema({
 	id: Number,
 	time:String,
 	data: String,
 	
-},{ collection: 'datas'})
+},{collection:'datas'})
 
-const Data = mongoose.model('Data', dataSchema);
+const Wifi = mongoose.model('Wifi', wifiSchema);
 
 
-export default Data
+export default Wifi
