@@ -6,13 +6,16 @@ import search from './search'
 import test from './test'
 import camera from './camera'
 import wifi from './wifiDemo'
+import collect from './collect'
 export default app => {
-	// app.get('/', (req, res, next) => {
-	// 	res.redirect('/');
-	// });
-	app.use('/data', data);
+	
+	app.use('/data', collect);
+	app.use('/test',collect);
+	app.use('/collect',collect);
 	app.use('/search',search);
 	app.use('/camera',camera)
-	app.use('/test',test)
+	
 	app.use('/wifi',wifi)
+
+	app.use('')
 }

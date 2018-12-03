@@ -4,12 +4,13 @@ import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema;
 
-const dataSchema = new Schema({
+const deviceSchema = new Schema({
 	id: Number,
     type: Number,
+    brand:String,
 })
 
-const Data = mongoose.model('Data', dataSchema);
+const Data = mongoose.model('Device', deviceSchema);
 
 
 export default Data
