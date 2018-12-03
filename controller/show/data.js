@@ -1,6 +1,6 @@
 'use strict';
 
-import DataModel from '../models/data'
+import DataModel from '../../models/data'
 import formidable from 'formidable'
 import dtime from 'time-formater'
 

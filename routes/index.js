@@ -1,21 +1,19 @@
 'use strict';
 
 
-import data from './data'
-import search from './search'
-import test from './test'
+
 import camera from './camera'
-import wifi from './wifiDemo'
 import collect from './collect'
 export default app => {
 	
-	app.use('/data', collect);
-	app.use('/test',collect);
+	app.use('/data', collect);//wifi(旧)
+	app.use('/test',collect);//摄像头(旧)
+
 	app.use('/collect',collect);
-	app.use('/search',search);
+	
 	app.use('/camera',camera)
 	
-	app.use('/wifi',wifi)
+	// app.use('/wifi',wifi)
 
-	app.use('')
+	// app.use('')
 }
