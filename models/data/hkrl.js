@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema;
 
-const Data_DHRLSchema = new Schema({
+const Data_HKRLSchema = new Schema({
 	id:Number,
 	start_time: String,
 	end_time:String,
@@ -13,7 +13,7 @@ const Data_DHRLSchema = new Schema({
 	pass:Number
 })
 
-const Data_DHRL = mongoose.model('Data_DHRL', Data_DHRLSchema);
+const Data_HKRL = mongoose.model('Data_HKRL', Data_HKRLSchema);
 
 
-export default Data_DHRL
+export default Data_HKRL

@@ -70,7 +70,7 @@ main.startAnalyse();
 
 app.use(history());
 app.use(express.static('./public'));
-app.listen(config.port,'127.0.0.1',() => {
+app.listen(config.port,'0.0.0.0',() => {
 	console.log(
 		chalk.green(`成功监听端口：${config.port}`)
 	)

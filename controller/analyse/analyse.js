@@ -1,6 +1,6 @@
 'use strict';
 
-import DataModel from '../../models/data'
+import DataModel from '../../models/data/dswifi'
 import logger from 'log4js'
 import dtime from 'time-formater'
 import xlsx  from 'node-xlsx'
@@ -11,20 +11,15 @@ import analyseModel from '../../models/analyse'
 class Analyse{
     constructor() {
         
-        // this.getData2(102,300,1000)
+        // this.getData2(102,103,1000)
         this.errorNum = 0
         this.tempAll = {}
         this.resultData = {}
-        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-27*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
-        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
-        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-2*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date()).format('x'))),24*60*60*1000))
-        //console.log(this.finalAnalyse(new Date(parseInt(dtime(new Date().getTime()-21*60*60*1000).format('x'))),new Date(parseInt(dtime(new Date().getTime()-20*60*60*1000).format('x'))),24*60*60*1000))
         // this.getData(1,'2018-11-01 05:00:00','2018-11-02 05:00:00')
         console.log(dtime(new Date()-24*60*60*1000).format('YYYY-MM-DD HH:mm:ss'),dtime(new Date()).format('YYYY-MM-DD HH:mm:ss'))
     }
     async getData(id,fromDate,toDate){
       logger.getLogger('analyse').info('--开始分析数据--',id,fromDate,toDate);
-      // const data = await DataModel.find({id:id,time:{ $gte : dtime(fromDate).format('YYYY-MM-DD HH:mm:ss'), $lte : dtime(toDate).format('YYYY-MM-DD HH:mm:ss') }}).skip((pageNum-1)*pageSize).limit(pageSize)
       const data = await DataModel.find({id:id,time:{ $gte : dtime(fromDate).format('YYYY-MM-DD HH:mm:ss'), $lte : dtime(toDate).format('YYYY-MM-DD HH:mm:ss') }})
       logger.getLogger('analyse').info('--数据读取成功--',id,fromDate,toDate);
       this.analyseData(data)
@@ -74,16 +69,28 @@ class Analyse{
         objKeys = objKeys.sort();//这里写所需要的规则
         var temp = []
         for(var i=0;i<objKeys.length;i++){
-          if(this.tempAll[objKeys[i]][0][2]>5*60){
+          if(this.tempAll[objKeys[i]][0][2]>10*60){
             temp.push([objKeys[i]].concat(this.tempAll[objKeys[i]]))
           }
         }
-        var excelTitle = ['用户','早餐时段（6:00-10:00）','早餐后（10:00-11:00）','午餐（11:00-14:00）','下午茶（14:00-17:00）','晚餐（17:00-20:00）','晚餐后（20:00-23:00)','深夜(23:00-3:00)','凌晨']
-        var analyseGap = []
-        var dateResult = {}
+        var tempfinal = []
         temp.forEach((item,index2)=>{
+          // if(index2 == 1){
+            var sumMinute = 0
+            item.forEach((single,index)=>{
+              if(index>0){
+                sumMinute = sumMinute + single[2]
+              }
+            })
+            if(sumMinute >3600*6){
+              console.log(item[0])
+            }else{
+              tempfinal.push(item)
+            }
+          // }
+        })
+        tempfinal.forEach((item,index2)=>{
           for(let i=1;i<item.length;i++){
-              console.log(item[i])
               const insertDate = {
                 id:1,
                 mac:item[0],
@@ -91,11 +98,15 @@ class Analyse{
                 from_time: dtime(item[i][0]).format('YYYY-MM-DD HH:mm:ss'),
                 to_time:dtime(item[i][1]).format('YYYY-MM-DD HH:mm:ss'),
               }
-               analyseModel.create(insertDate)
+              //  analyseModel.create(insertDate)
+              console.log(insertDate)
           }      
         })
         logger.getLogger('analyse').info('--数据分析结束--',temp.length);   
     }
+
+
+    
     async getData2(pageNum,allPage,pageSize){
       logger.getLogger('analyse').info('--开始分析数据--',pageNum,pageSize);
       const data = await DataModel.find({}).skip((pageNum-1)*pageSize).limit(pageSize)
@@ -135,7 +146,7 @@ class Analyse{
           })
         } catch (error) {
           logger.getLogger('error').error('--错误数据--',this.errorNum++);
-          console.log(item._id,'错误id') 
+          // console.log(item._id,'错误id') 
           // console.log(error)
         }
       })
@@ -147,22 +158,30 @@ class Analyse{
         var temp = []
         for(var i=0;i<objKeys.length;i++){
           // console.log(objKeys[i]+" : "+tempAll[objKeys[i]]);
-          if(this.tempAll[objKeys[i]][0][2]>5*60){
+          if(this.tempAll[objKeys[i]][0][2]>10*60){
             temp.push([objKeys[i]].concat(this.tempAll[objKeys[i]]))
           }
         }
         var excelTitle = ['用户','早餐时段（6:00-10:00）','早餐后（10:00-11:00）','午餐（11:00-14:00）','下午茶（14:00-17:00）','晚餐（17:00-20:00）','晚餐后（20:00-23:00)','深夜(23:00-3:00)','凌晨']
         var analyseGap = []
         var dateResult = {}
-        // temp.forEach((item,index2)=>{
-        //   if(index2 == 0){
-        //     item.forEach((single,index)=>{
-        //       console.log(single(0),single(1))
-        //       console.log(this.finalAnalyse(single[0],single[1],single[2]))
-        //     })
-        //   }
-        // })
+        var tempfinal = []
         temp.forEach((item,index2)=>{
+          // if(index2 == 1){
+            var sumMinute = 0
+            item.forEach((single,index)=>{
+              if(index>0){
+                sumMinute = sumMinute + single[2]
+              }
+            })
+            if(sumMinute >3600*6){
+              console.log(item[0])
+            }else{
+              tempfinal.push(item)
+            }
+          // }
+        })
+        tempfinal.forEach((item,index2)=>{
           for(let i=1;i<item.length;i++){
               // console.log(item[i])
               const insertDate = {
@@ -172,19 +191,20 @@ class Analyse{
                 from_time: dtime(item[i][0]).format('YYYY-MM-DD HH:mm:ss'),
                 to_time:dtime(item[i][1]).format('YYYY-MM-DD HH:mm:ss'),
               }
-               analyseModel.create(insertDate)
+              //  analyseModel.create(insertDate)
+              console.log(insertDate)
           }      
         })
-        logger.getLogger('analyse').info('--数据分析结束--',temp.length);
+        logger.getLogger('analyse').info('--数据分析结束--',tempfinal.length);
         // var buffer = xlsx.build([{name: "mySheetName", data: temp}]);
         
         // var time = dtime().format('YYYY-MM-DD');
         // fs.writeFileSync('数据'+time+'.xlsx',buffer);
       }
     }
-    getFile(){
+    getFile(workSheetsFromFile){
       // console.log()
-      const workSheetsFromFile = xlsx.parse(path.join(__dirname,'data.xlsx'));
+      // const workSheetsFromFile = xlsx.parse(path.join(__dirname,'data.xlsx'));
       var tempRes = {}
       workSheetsFromFile.forEach(item=>{
         item.data.forEach((single)=>{
