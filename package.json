@@ -19,6 +19,7 @@
     "url": "https://github.com/bailicangdu/node-elm"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel": "^6.23.0",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.0",

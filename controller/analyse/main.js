@@ -1,11 +1,13 @@
 'use strict';
 
 import analyse from './analyse';
+import archive from '../collect/archive';
 
 import schedule from 'node-schedule';
 class Main{
-    constructor(analyse,test) {
+    constructor(analyse,archive) {
         this.analyse = analyse
+        this.archive = archive
     }
     startAnalyse(){
         this.analyse = new analyse()

@@ -1,7 +1,7 @@
 'use strict';
 
 // import DataModel from '../models/wifidemo'
-import request from 'request'
+import axios from 'axios'
 import qs from 'qs'
 import formidable from 'formidable'
 import dtime from 'time-formater'
@@ -28,7 +28,7 @@ class Data {
                 areaIds = areaIds + areas.data[i].areaId + ","
             }
 
-            var stayDate = await this.getStayPeople(token.access_token, areaIds,dtime(time).format('YYYY-MM-DD'), staySecond)
+            var stayDate = await this.getStayPeople(token.access_token, areaIds, dtime(time).format('YYYY-MM-DD'), staySecond)
             res.send({
                 status: 1,
                 data: stayDate.data,
@@ -175,7 +175,7 @@ class Data {
             // 	allData.push(finalDataTemp)
             // console.log(data)
         } catch (err) {
-            console.log(err)
+            // console.log(err)
             res.send({
                 status: 0,
                 message: '获取数据失败'
@@ -339,7 +339,7 @@ class Data {
                 allTimeData.push(dtime(i).format('YYYY-MM-DD'))
                 i = i + 24 * 3600 * 1000
             }
-
+                
 
             var data = {};
             for (var i = 0; i < DataTemp.length; i++) {
@@ -401,48 +401,69 @@ class Data {
             scope: 'app'
         }
         return new Promise((resolve, reject) => {
-            request.post({ url: 'https://api.hik-cloud.com/oauth/token', form: tokendata }, function (err, res, body) {
-                if (!err && res.statusCode == 200) {
-                    resolve(JSON.parse(body))
-                } else {
-                    reject(err)
-                }
+            axios({
+                url: 'https://api.hik-cloud.com/oauth/token',
+                method: 'POST',
+                data: qs.stringify(tokendata)
+            }).then(res => {
+                resolve(res.data)
+            }).catch(err => {
+                reject(err)
             })
         });
     }
     //查询门店信息(storeId)
     getStore(token) {
         return new Promise((resolve, reject) => {
-            request('https://api.hik-cloud.com/v1/customization/storeInfo?pageNo=1&pageSize=10&access_token=' + token, function (err, res, body) {
-                if (!err && res.statusCode == 200) {
-                    resolve(JSON.parse(body))
-                } else {
-                    reject(err)
+            axios({
+                url: 'https://api.hik-cloud.com/v1/customization/storeInfo',
+                method: 'GET',
+                params: {
+                    pageNo: 1,
+                    pageSize: 10,
+                    access_token: token
                 }
+            }).then(res => {
+                resolve(res.data)
+            }).catch(err => {
+                reject(err)
             })
         });
     }
     //获取门店下热度配置查询(areaId)
     getAreas(token, storeId) {
         return new Promise((resolve, reject) => {
-            request('https://api.hik-cloud.com/v1/customization/heats/areas?storeId=' + storeId + '&access_token=' + token, function (err, res, body) {
-                if (!err && res.statusCode == 200) {
-                    resolve(JSON.parse(body))
-                } else {
-                    reject(err)
+            axios({
+                url: 'https://api.hik-cloud.com/v1/customization/heats/areas',
+                method: 'GET',
+                params: {
+                    storeId: storeId,
+                    access_token: token
                 }
+            }).then(res => {
+                resolve(res.data)
+            }).catch(err => {
+                reject(err)
             })
         });
     }
     //获取驻足人次分布()
     getStayPeople(token, areaIds, date, staySecond) {
         return new Promise((resolve, reject) => {
-            request('https://api.hik-cloud.com/v1/customization/heats/actions/stayPeopledistributions?access_token=' + token + '&storeId=2ca13286c47947a6b18e1b30556ddb82&date=' + date + '&storeAreaIds=' + areaIds + '&staySeconds=' + staySecond, function (err, res, body) {
-                if (!err && res.statusCode == 200) {
-                    resolve(JSON.parse(body))
-                } else {
-                    reject(err)
+            axios({
+                url: 'https://api.hik-cloud.com/v1/customization/heats/actions/stayPeopledistributions',
+                method: 'GET',
+                params: {
+                    storeId: "2ca13286c47947a6b18e1b30556ddb82",
+                    date: date,
+                    access_token: token,
+                    storeAreaIds: areaIds,
+                    staySeconds: staySecond
                 }
+            }).then(res => {
+                resolve(res.data)
+            }).catch(err => {
+                reject(err)
             })
         });
     }
