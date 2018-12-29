@@ -14,4 +14,8 @@ router.get('/hkrq/byall',Show.getDataRQTotal)
 router.get('/hkrq/byecharts',Show.getDataRQEchartsByhour)
 
 router.get('/dxmrl/bypeople',Show.getDataDXMbyPeople)
+router.get('/byhour',Show.getDataRLByhour)
+router.get('/byday',Show.getDataRLByday)
+router.get('/hkdl/byDay',Show.getDataHKDLByDay)
+router.get('/hkdl/byHour',Show.getDataHKDLByHour)
 export default router
