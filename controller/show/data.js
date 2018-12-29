@@ -4,7 +4,7 @@
 import HkrlModel from '../../models/data/hkrl'
 import formidable from 'formidable'
 import dtime from 'time-formater'
-
+import hkdl from '../analyse/hkdl'
 class Data  {
 	constructor(){
 		this.getDataRLByhour = this.getDataRLByhour.bind(this)
@@ -168,25 +168,39 @@ class Data  {
 			})
 		}
 	}
-	async getDataDL(req, res, next){ //逗留时长接口
+	// from_time: 起始日期'2018-12-20', to_time:结束日期'2018-12-29', from_hour:起始时间点'5',hours:小时数'24' 
+	async getDataHKDLByDay(req, res, next){ //逗留时长接口
         const {id} = req.params
-		const form = new formidable.IncomingForm();
-		form.parse(req, async (err, fields, files) => {
-			const {data} = fields;
-			console.log(data)
-			try{
-                DataModel.create({id:id,data:data})
-                res.send({
-					status: 1,
-					message: 1,
-				})
-			}catch(err){
-				res.send({
-					status: 0,
-					message: 0,
-				})
-			}
-		})
+		const {from_time,to_time,from_hour,hours} = req.query
+		try {
+			const resHKDL = await hkdl.getDataHKDLByDay(from_time,to_time,from_hour,hours)
+			res.send({
+				status:1,
+				data:resHKDL
+			})
+		} catch (error) {
+			res.send({
+				status: 0,
+				message: '获取数据失败'
+			})
+		}
+	}
+	// from_time: 起始日期'2018-12-20', to_time:结束日期'2018-12-29', type 0 包含
+	async getDataHKDLByHour(req, res, next){ //逗留时长接口
+        const {id} = req.params
+		const {from_time,to_time,type} = req.query
+		try {
+			const resHKDL = await hkdl.getDataHKDLByDay(from_time,to_time,from_hour,hours)
+			res.send({
+				status:1,
+				data:resHKDL
+			})
+		} catch (error) {
+			res.send({
+				status: 0,
+				message: '获取数据失败'
+			})
+		}
     }
 }
 export default new Data()

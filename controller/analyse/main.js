@@ -3,15 +3,17 @@
 import analyse from './analyse';
 
 import schedule from 'node-schedule';
+import hkdl from './hkdl'
 class Main{
-    constructor(analyse,test) {
-        this.analyse = analyse
+
+    constructor(analyse,test,hkdl) {
+        // this.analyse = analyse
+        // this.test = test
+        this.hkdl = hkdl
     }
     startAnalyse(){
-        this.analyse = new analyse()
-    //  schedule.scheduleJob('00 0 5 * * *',function(){
-    //     this.analyse = new analyse()
-    //    });
+        this.hkdl = new hkdl()
+
     }
 }
 export default new Main()

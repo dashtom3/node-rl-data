@@ -28,7 +28,8 @@ class Collect  {
 				message: 0,
 			})
 		}
-    }
+	}
+	
 	async collectDSWIFI(req, res, next){
         const {id} = req.params
 		const form = new formidable.IncomingForm();
