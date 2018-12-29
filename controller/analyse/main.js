@@ -12,8 +12,5 @@ class Main{
 
     
     }
-    startAnalyse(){
-        this.hkdl = new hkdl()
-    }
 }
 export default new Main()

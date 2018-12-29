@@ -13,10 +13,12 @@ class HKDL{
     constructor() {
         this.dlByDay = this.dlByDay.bind(this)
         // this.init()
+        this.init()
     }
     async init(){
         console.log(111)
         console.log(await this.getDLByDay('2018-12-20','2018-12-29','5',24))
+        // console.log(await this.getDLByDay('2018-12-22','2018-12-22','5',24))
     }
     async getDLByDay(from_time,to_time,from_hour,hours){
         var dateStart  = parseInt(dtime(from_time + ' ' + from_hour + ':00:00').format('x'))
@@ -40,48 +42,58 @@ class HKDL{
         
     }
     timeSequence(data){
-        var params = {
-            statetime:[0,0.5,1],
-            rate:[0,5,10,15,20]
-        }
-        var enters = 0
-        var outs = 0
         var enterTime = 0
         var outTime = 0
         var outTime2 = 0
-        var rate = 0
-        var number = 0
+       
+        var array = [[],[]]
         data.forEach((item,index)=>{
-            enters = enters + item.enter
-            outs = outs + item.exit
-        })
-        rate = parseFloat(outs/enters)
-        console.log('进出次数',enters,outs)
-        // enters = 0
-        outs = 0
-        data.forEach(item=>{
             if(item.enter != 0 || item.exit != 0){
                 var tempTime = parseInt(dtime(item.start_time).format('x'))
-                enterTime = enterTime + tempTime*item.enter
+                for(var i=0;i<item.enter;i++){
+                    array[0].push(tempTime)
+                }
                 for(var i=0;i<item.exit;i++){
-                    outs++
-                    outTime = outTime + tempTime
-                    while(true){
-                        if(outs > parseInt(rate*number)){
-                            number++
-                        }else if(outs < parseInt(rate*number)){
-                            break;
-                        }else if(parseInt(rate*number) == outs){
-                            outTime2 = outTime2 + tempTime
-                            break;
-                        }
-                    }
+                    array[1].push(tempTime)
                 }
             }
         })
-        var peak = dtime(parseInt(enterTime/enters)).format('YYYY-MM-DD HH:mm:ss')
-        var peak2 = dtime(parseInt(outTime/outs)).format('YYYY-MM-DD HH:mm:ss')
-        var peak3 = dtime(parseInt(outTime2/enters)).format('YYYY-MM-DD HH:mm:ss')
+        console.log('进出次数',array[0].length,array[1].length)
+        array[0].forEach((item,index)=>{
+            enterTime = enterTime + item/array[0].length
+            var temp = ((index+1)*parseFloat(array[1].length/array[0].length).toFixed(0)-1)
+            // console.log(enterTime,temp)
+            outTime2 = outTime2 + (array[1][temp]?array[1][temp]:array[1][array[1].length-1])/array[0].length
+            // console.log(outTime2)
+        })
+        array[1].forEach(item=>{
+            outTime = outTime + item/array[1].length
+        })
+        // enters = 0
+        // outs = 0
+        // data.forEach(item=>{
+        //     if(item.enter != 0 || item.exit != 0){
+        //         var tempTime = parseInt(dtime(item.start_time).format('x'))
+        //         enterTime = enterTime + tempTime*item.enter
+        //         for(var i=0;i<item.exit;i++){
+        //             outs++
+        //             outTime = outTime + tempTime
+        //             while(true){
+        //                 if(outs > parseInt(rate*number)){
+        //                     number++
+        //                 }else if(outs < parseInt(rate*number)){
+        //                     break;
+        //                 }else if(parseInt(rate*number) == outs){
+        //                     outTime2 = outTime2 + tempTime
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // })
+        var peak = dtime(parseInt(enterTime)).format('YYYY-MM-DD HH:mm:ss')
+        var peak2 = dtime(parseInt(outTime)).format('YYYY-MM-DD HH:mm:ss')
+        var peak3 = dtime(parseInt(outTime2)).format('YYYY-MM-DD HH:mm:ss')
         console.log(peak,peak2,peak3)
         return ((parseInt(dtime(peak2).format('x'))-parseInt(dtime(peak).format('x')))/1000/60).toFixed(2)
         // var dateStart = parseInt(dtime(data[0].start_time).format('x'));
@@ -202,5 +214,5 @@ class HKDL{
     }
     
 }
-export default HKDL
+export default new HKDL()
   
