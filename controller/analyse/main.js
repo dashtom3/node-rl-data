@@ -12,7 +12,7 @@ class Main{
         this.hkdl = hkdl
     }
     startAnalyse(){
-        this.hkdl = new hkdl()
+    
 
     }
 }
