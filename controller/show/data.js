@@ -238,9 +238,9 @@ class Data  {
 	async getDataHKDLByHour(req, res, next){ //逗留时长接口
         
         // const {id} = req.params
-		const {from_time,to_time,type} = req.query
+		const {from_time,to_time,from_hour,hours} = req.query
 		try {
-			const resHKDL = await hkdl.getDLByDay(from_time,to_time,type)
+			const resHKDL = await hkdl.getDLByHour(from_time,to_time,from_hour,hours)
 			res.send({
 				status:1,
 				data:resHKDL

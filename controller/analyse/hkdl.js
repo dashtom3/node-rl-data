@@ -16,10 +16,10 @@ class HKDL{
         this.init()
     }
     async init(){
-        console.log(111)
+        // console.log(111)
         // console.log(await this.getDLByDay('2018-12-20','2018-12-29','5',24))
         // console.log(await this.getDLByDay('2018-12-22','2018-12-22','5',24))
-        console.log(await this.getDLByHour('2018-12-21','2018-12-26','9',18))
+        // console.log(await this.getDLByHour('2018-12-21','2018-12-26','9',18))
     }
     async getDLByDay(from_time,to_time,from_hour,hours){
         var dateStart  = parseInt(dtime(from_time + ' ' + from_hour + ':00:00').format('x'))
@@ -74,7 +74,7 @@ class HKDL{
                 }
             }
         })
-        console.log('进出次数',array[0].length,array[1].length)
+        // console.log('进出次数',array[0].length,array[1].length)
         array[0].forEach((item,index)=>{
             enterTime = enterTime + item/array[0].length
             var temp = ((index+1)*parseFloat(array[1].length/array[0].length)).toFixed(0)-1
@@ -88,7 +88,7 @@ class HKDL{
         var peak = dtime(parseInt(enterTime)).format('YYYY-MM-DD HH:mm:ss')
         var peak2 = dtime(parseInt(outTime)).format('YYYY-MM-DD HH:mm:ss')
         var peak3 = dtime(parseInt(outTime2)).format('YYYY-MM-DD HH:mm:ss')
-        console.log(peak,peak2,peak3)
+        // console.log(peak,peak2,peak3)
         return ((parseInt(dtime(peak3).format('x'))-parseInt(dtime(peak).format('x')))/1000/60).toFixed(2)
         
     }
@@ -135,7 +135,7 @@ class HKDL{
                 }
             }
         })
-        console.log('进出次数',array[0].length,array[1].length)
+        // console.log('进出次数',array[0].length,array[1].length)
         var timeFrom = parseInt(dtime(from_time).format('x'))
         var timeSeq = [timeFrom,timeFrom+4*60*60*1000,timeFrom+8*60*60*1000,timeFrom+12*60*60*1000,timeFrom+20*60*60*1000]
         var timeName = ['午餐','下午茶','晚餐','午夜']
@@ -149,7 +149,7 @@ class HKDL{
             }
             res.push(temp)
         }
-        console.log(res)
+        // console.log(res)
         return res
     }
     async dlByHour(ids,from_time,to_time){

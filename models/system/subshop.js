@@ -9,7 +9,7 @@ const subshopSchema = new Schema({
     name:String,
     address:String,
 	create_time:String,
-	group:[{ type:Schema.Types.ObjectId, ref: 'Group'}]
+	device:[{ type:Schema.Types.ObjectId, ref: 'Device'}]
 })
 
 const Subshop = mongoose.model('Subshop', subshopSchema);
