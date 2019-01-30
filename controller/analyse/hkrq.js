@@ -13,7 +13,16 @@ class HKRQ {
 
     }
     async getRQbyAll(from_time, to_time) {
-        const constNum = await HKrqModel.find({ start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lte: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
+
+        const sinConstNum = await HKrqModel.find({start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lte: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
+            // console.log(sinConstNum)
+            var constNum = []
+            sinConstNum.forEach(res =>{
+                var time = dtime(res.start_time).format('HH:mm')
+                if (time >= dtime(from_time).format('HH:mm') && time <= dtime(to_time).format('HH:mm')) {
+                    constNum.push(res)
+                }
+            })
         var data = {};
         for (var i = 0; i < constNum.length; i++) {
             var stay = constNum[i].staySecond
@@ -156,7 +165,7 @@ class HKRQ {
                 for (var o of data[m][k]) {
                     stayTotal = stayTotal + o.stayPeopleCount
                 }
-                dataTemp.push((stayTotal / data[m][k].length).toFixed(0))
+                dataTemp.push(stayTotal)
                 finalDataTemp[m] = dataTemp
             }
             hourData.push(finalDataTemp)
@@ -203,7 +212,7 @@ class HKRQ {
                 for (var o of undata[m][k]) {
                     stayTotal = stayTotal + o.stayPeopleCount
                 }
-                dateTemp.push((stayTotal / undata[m][k].length).toFixed(0))
+                dateTemp.push(stayTotal)
                 finalDataTemp[m] = dateTemp
             }
             unhourData.push(finalDataTemp)

@@ -133,7 +133,7 @@ class Data  {
 		const form = new formidable.IncomingForm();
 		form.parse(req, async (err, fields, files) => {
 			const { data } = fields;
-			console.log(data)
+			// console.log(data)
 			try {
 				DataModel.create({ id: id, data: data })
 				res.send({
@@ -219,7 +219,7 @@ class Data  {
 	async getDataHKDLByDay(req, res, next){ //逗留时长接口
         // const {id} = req.params
 		const {from_time,to_time,from_hour,hours} = req.query
-		console.log(req.query)
+		// console.log(req.query)
 		try {
 			const resHKDL = await hkdl.getDLByDay(from_time,to_time,from_hour,parseInt(hours))
 			res.send({
@@ -236,7 +236,6 @@ class Data  {
 	}
 	// from_time: 起始日期'2018-12-20', to_time:结束日期'2018-12-29', type 0 包含
 	async getDataHKDLByHour(req, res, next){ //逗留时长接口
-        
         // const {id} = req.params
 		const {from_time,to_time,from_hour,hours} = req.query
 		try {
