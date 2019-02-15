@@ -91,61 +91,93 @@ class HKRL {
                 }
             }
         }
-
-        const countTotal = await HkrlModel.aggregate(
-            { $match: { id: Number(id), start_time: { $gte: from_time, $lt: to_time } } },
-            { $project: { enter: 1, exit: 1, pass: 1 } },
-            { $group: { _id: null, enter: { $sum: "$enter" }, exit: { $sum: "$exit" }, pass: { $sum: "$pass" } } },
-            { $project: { _id: 0, enter: 1, exit: 1, pass: 1 } },
-        )
-        var resHKRL = {data: cameraData,total: countTotal}
+        var resHKRL = cameraData
         return resHKRL
     }
-
-    async getDataRLByDay(id, from_time, to_time){
-        const dayDate = await HkrlModel.aggregate(
-            {
-                $match: {
-                    id: Number(id),
-                    start_time: { $gte: from_time, $lt: to_time }
+    // async getDataRLByDay(id, from_time, to_time){
+    //     const dayDate = await HkrlModel.aggregate(
+    //         {
+    //             $match: {
+    //                 id: Number(id),
+    //                 start_time: { $gte: from_time, $lt: to_time }
+    //             }
+    //         },
+    //         {
+    //             $project: {
+    //                 start_time: 1,
+    //                 end_time: 1,
+    //                 daytime: { $substr: ["$start_time", 0, 10] },
+    //                 enter: 1,
+    //                 exit: 1,
+    //                 pass: 1
+    //             }
+    //         },
+    //         { $group: { _id: "$daytime", start_time: { $first: { $substr: ["$start_time", 0, 10] } }, end_time: { $last: { $substr: ["$end_time", 0, 10] } }, enter: { $sum: "$enter" }, exit: { $sum: "$exit" }, pass: { $sum: "$pass" } } },
+    //         {
+    //             $project: {
+    //                 _id: 0,
+    //                 start_time: 1,
+    //                 end_time: 1,
+    //                 enter: 1,
+    //                 exit: 1,
+    //                 pass: 1,
+    //             }
+    //         },
+    //         { $sort: { start_time: 1 } }
+    //     )
+    //     const dayTotal = await HkrlModel.aggregate(
+    //         {
+    //             $match: {
+    //                 id: Number(id),
+    //                 start_time: { $gte: from_time, $lt: to_time }
+    //             }
+    //         },
+    //         { $project: { enter: 1, exit: 1, pass: 1 } },
+    //         { $group: { _id: null, enter: { $sum: "$enter" }, exit: { $sum: "$exit" }, pass: { $sum: "$pass" } } },
+    //         { $project: { _id: 0, enter: 1, exit: 1, pass: 1 } },
+    //     )
+    //     var resHKRL = {data:dayDate,total:dayTotal}
+    //     return resHKRL
+    // }
+    async getDataRLByDay(ids, from_time, to_time){
+        var minTime = dtime(from_time).format('HH')
+        var maxTime = dtime(to_time).format('HH')
+        var dayAllData = []
+        for(var id of ids){
+            var dayData = await HkrlModel.find({ id: Number(id), start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
+            dayData.forEach(res =>{
+                    var limitTime = dtime(res.start_time).format('HH')
+                    if (limitTime >= minTime && limitTime <= maxTime) {
+                        dayAllData.push(res)
+                    }
+            })
+        }
+        var data = {}
+            for (var i = 0; i < dayAllData.length; i++) {
+                    var time = dtime(dayAllData[i].start_time).format('YYYY-MM-DD')
+                    if (!data[time]) {
+                        var arr = [];
+                        arr.push(dayAllData[i]);
+                        data[time] = arr;
+                    } else {
+                        data[time].push(dayAllData[i])
+                    }
+            }
+            var finalArr = []
+            for (var key in data) {
+                var enter = 0; var exit = 0;
+                for (var d of data[key]) {
+                    enter = enter + d.enter
+                    exit = exit + d.exit
                 }
-            },
-            {
-                $project: {
-                    start_time: 1,
-                    end_time: 1,
-                    daytime: { $substr: ["$start_time", 0, 10] },
-                    enter: 1,
-                    exit: 1,
-                    pass: 1
+                var temp = {
+                    start_time: key,
+                    enter: enter,
+                    exit: exit
                 }
-            },
-            { $group: { _id: "$daytime", start_time: { $first: { $substr: ["$start_time", 0, 10] } }, end_time: { $last: { $substr: ["$end_time", 0, 10] } }, enter: { $sum: "$enter" }, exit: { $sum: "$exit" }, pass: { $sum: "$pass" } } },
-            {
-                $project: {
-                    _id: 0,
-                    start_time: 1,
-                    end_time: 1,
-                    enter: 1,
-                    exit: 1,
-                    pass: 1,
-                }
-            },
-            { $sort: { start_time: 1 } }
-        )
-        const dayTotal = await HkrlModel.aggregate(
-            {
-                $match: {
-                    id: Number(id),
-                    start_time: { $gte: from_time, $lt: to_time }
-                }
-            },
-            { $project: { enter: 1, exit: 1, pass: 1 } },
-            { $group: { _id: null, enter: { $sum: "$enter" }, exit: { $sum: "$exit" }, pass: { $sum: "$pass" } } },
-            { $project: { _id: 0, enter: 1, exit: 1, pass: 1 } },
-        )
-        var resHKRL = {data:dayDate,total:dayTotal}
-        return resHKRL
+                finalArr.push(temp)
+            }
+            return finalArr
     }
 }
 export default new HKRL()

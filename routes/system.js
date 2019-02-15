@@ -13,4 +13,5 @@ router.post('/subshop/operate', Subshop.operateShop);
 router.get('/subshop/all', Subshop.getShopList);
 
 router.get('/getrldata/bydimension',Data.getHKRLDataBydimension)
+router.get('/getrldata/byday',Data.getHKRLDataByday)
 export default router

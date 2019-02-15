@@ -26,7 +26,23 @@ class Data {
         })
     }
    }
-	
+   async getHKRLDataByday(req,res,next){
+    try{
+     const {deviceIds,from_time,to_time} = req.query
+     const resData = await hkrl.getDataRLByDay(deviceIds,from_time,to_time)
+     res.send({
+         status:1,
+         data:resData,
+         message: '访问成功',
+     })
+ }catch(err){
+     res.send({
+         status:0,
+         type: 'ERROR',
+         message: '访问失败',
+     })
+ }
+}
 }
 
 export default new Data()
