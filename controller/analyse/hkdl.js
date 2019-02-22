@@ -19,7 +19,7 @@ class HKDL{
         // console.log(111)
         // console.log(await this.getDLByDay('2018-12-20','2018-12-29','5',24))
         // console.log(await this.getDLByDay('2018-12-22','2018-12-22','5',24))
-        console.log(await this.getDLByHour('2018-02-02','2018-02-08','9',18))
+        // console.log(await this.getDLByHour('2018-02-02','2018-02-08','9',18))
     }
     async getDLByDay(from_time,to_time,from_hour,hours){
         var dateStart  = parseInt(dtime(from_time + ' ' + from_hour + ':00:00').format('x'))
@@ -123,10 +123,10 @@ class HKDL{
     //timeStr{from:,to:} // 09:00～13:00 13:00～17:00 17:00～21:00 21:00～05:00  
     timeSequence2(data,from_time){
         var array = [[],[]]
-        console.log(data)
+        // console.log(data)
         data.forEach((item,index)=>{
             if(item.enter != 0 || item.exit != 0){
-                console.log(item.start_time,item.enter,item.exit)
+                // console.log(item.start_time,item.enter,item.exit)
                 var tempTime = parseInt(dtime(item.start_time).format('x'))
                 for(var i=0;i<item.enter;i++){
                     array[0].push(tempTime)
@@ -136,7 +136,7 @@ class HKDL{
                 }
             }
         })
-        console.log('进出次数',array[0].length,array[1].length)
+        // console.log('进出次数',array[0].length,array[1].length)
         var timeFrom = parseInt(dtime(from_time).format('x'))
         var timeSeq = [timeFrom,timeFrom+4*60*60*1000,timeFrom+8*60*60*1000,timeFrom+12*60*60*1000,timeFrom+20*60*60*1000]
         var timeName = ['午餐','下午茶','晚餐','午夜']
@@ -155,7 +155,7 @@ class HKDL{
                res.time = '0'
             }
         })
-        console.log(res)
+        // console.log(res)
         return res
     }
     async dlByHour(ids,from_time,to_time){

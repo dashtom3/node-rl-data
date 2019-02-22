@@ -9,8 +9,12 @@ class Main{
     constructor(analyse,archive) {
         this.analyse = analyse
         this.archive = archive
-
-    
+    }
+    startAnalyse(){
+        // schedule.scheduleJob('30 * * * * *',()=>{
+        //     this.archive =  archive
+        // }); 
+        
     }
 }
 export default new Main()

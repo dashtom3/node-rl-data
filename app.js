@@ -66,7 +66,7 @@ app.use(session({
 
 router(app);
 
-// main.startAnalyse();
+main.startAnalyse();
 
 app.use(history());
 app.use(express.static('./public'));

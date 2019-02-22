@@ -8,7 +8,7 @@ class Data {
 	constructor(){
 		
     }
-    //海康人流查询接口 storeId 店铺id,fromDate 开始日期,toDate 结束日期,startTime 开始时间,endTime 结束时间,dimension 0:小时 1:天 2:周 3:月
+    //海康人流查询接口 deviceIds 店铺id,from_time 开始时间,to_time 结束时间,dimension 0:小时 1:天 2:周 3:月
    async getHKRLDataBydimension(req,res,next){
        try{
         const {token,deviceIds,from_time,to_time,dimension} = req.query

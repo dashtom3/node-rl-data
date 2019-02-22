@@ -13,13 +13,13 @@ class HKRQ {
 
     }
     async getRQbyAll(from_time, to_time) {
-
-        const sinConstNum = await HKrqModel.find({start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lte: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
-            // console.log(sinConstNum)
+        const sinConstNum = await HKrqModel.find({start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
+            var MINtime = from_time.substring(11,16)
+            var MAXtime = to_time.substring(11,16)
             var constNum = []
             sinConstNum.forEach(res =>{
                 var time = dtime(res.start_time).format('HH:mm')
-                if (time >= dtime(from_time).format('HH:mm') && time <= dtime(to_time).format('HH:mm')) {
+                if (time >= MINtime && time < MAXtime) {
                     constNum.push(res)
                 }
             })
@@ -64,12 +64,12 @@ class HKRQ {
         return tempData
     }
     async getRQbyHour(from_time, to_time, staySecond) {
-        const constNum = await HKrqModel.find({ staySecond: staySecond, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lte: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
+        const constNum = await HKrqModel.find({ staySecond: staySecond, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
         var data = {}, dateCount = {}
         for (var i = 0; i < constNum.length; i++) {
             dateCount[dtime(constNum[i].start_time).format('YYYY-MM-DD')] = 1
             var time = dtime(constNum[i].start_time).format('HH:mm')
-            if (time >= dtime(from_time).format('HH:mm') && time <= dtime(to_time).format('HH:mm')) {
+            if (time >= dtime(from_time).format('HH:mm') && time < dtime(to_time).format('HH:mm')) {
                 if (!data[time]) {
                     var arr = [];
                     arr.push(constNum[i]);
@@ -116,7 +116,7 @@ class HKRQ {
     }
 
     async getRQechatrsByHour(from_time, to_time, staySecond) {
-        const constNum = await HKrqModel.find({ staySecond: staySecond, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lte: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
+        const constNum = await HKrqModel.find({ staySecond: staySecond, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
         var weekday = [], unweekday = []
         constNum.forEach(item => {
             var date = dtime(item.start_time).format('YYYY-MM-DD')
@@ -138,12 +138,13 @@ class HKRQ {
                 data[weekday[i].areaName].push(weekday[i])
             }
         }
-
+        var MINtime = from_time.substring(11,16)
+        var MAXtime = to_time.substring(11,16)
         for (var m in data) {
             var data1 = {}
             for (var k of data[m]) {
                 var time = dtime(k.start_time).format('HH:mm')
-                if (time >= dtime(from_time).format('HH:mm') && time <= dtime(to_time).format('HH:mm')) {
+                if (time >= MINtime && time < MAXtime) {
                     if (!data1[time]) {
                         var arr1 = [];
                         arr1.push(k);
@@ -188,7 +189,7 @@ class HKRQ {
             var data1 = {}
             for (var k of undata[m]) {
                 var time = dtime(k.start_time).format('HH:mm')
-                if (time >= dtime(from_time).format('HH:mm') && time <= dtime(to_time).format('HH:mm')) {
+                if (time >= MINtime && time < MAXtime) {
                     if (!data1[time]) {
                         var arr1 = [];
                         arr1.push(k);
@@ -222,7 +223,7 @@ class HKRQ {
     }
 
     async getDataRQByDay(from_time, to_time, staySecond) {
-        const constNum = await HKrqModel.find({ staySecond: staySecond, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lte: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
+        const constNum = await HKrqModel.find({ staySecond: staySecond, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm') } }).sort({ start_time: 1 })
         var data = {};
         for (var i = 0; i < constNum.length; i++) {
             if (!data[constNum[i].areaName]) {
@@ -233,11 +234,13 @@ class HKRQ {
                 data[constNum[i].areaName].push(constNum[i])
             }
         }
+        var MINtime = from_time.substring(11,16)
+        var MAXtime = to_time.substring(11,16)
         for (var m in data) {
             var data1 = {}
             for (var k of data[m]) {
                 var limtTime = dtime(k.start_time).format('HH:mm')
-                if (limtTime >= dtime(from_time).format('HH:mm') && limtTime <= dtime(to_time).format('HH:mm')) {
+                if (limtTime >= MINtime && limtTime < MAXtime) {
                     var date = dtime(k.start_time).format('YYYY-MM-DD')
                     if (!data1[date]) {
                         var arr1 = [];

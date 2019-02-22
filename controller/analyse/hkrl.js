@@ -140,14 +140,14 @@ class HKRL {
     //     return resHKRL
     // }
     async getDataRLByDay(ids, from_time, to_time){
-        var minTime = dtime(from_time).format('HH')
-        var maxTime = dtime(to_time).format('HH')
+        var minTime = Number(from_time.substring(11,13))
+        var maxTime = Number(to_time.substring(11,13))
         var dayAllData = []
         for(var id of ids){
             var dayData = await HkrlModel.find({ id: Number(id), start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
             dayData.forEach(res =>{
                     var limitTime = dtime(res.start_time).format('HH')
-                    if (limitTime >= minTime && limitTime <= maxTime) {
+                    if (limitTime >= minTime && limitTime < maxTime) {
                         dayAllData.push(res)
                     }
             })

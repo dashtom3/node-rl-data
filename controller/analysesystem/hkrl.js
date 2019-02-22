@@ -13,15 +13,13 @@ class HKRL {
         var maxTime = Number(to_time.substring(11,13))
         if (dimension == '0') { //维度为小时 
             var consAlltNum = []
-            for (var id of ids) {
-                var constNum = await HkrlModel.find({ id: Number(id), start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
+                var constNum = await HkrlModel.find({id: {$in:ids}, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
                 constNum.forEach(res => {
                     var limitTime = dtime(res.start_time).format('HH')
                     if (limitTime >= minTime && limitTime < maxTime) {
                         consAlltNum.push(res)
                     }
                 })
-            }
             var temp = {}
             for (var i = 0; i < consAlltNum.length; i++) {
                 var time = dtime(consAlltNum[i].start_time).format('HH')
@@ -53,15 +51,13 @@ class HKRL {
             return cameraData
         } else if (dimension == '1') {
             var dayAllData = []
-            for (var id of ids) {
-            var dayData = await HkrlModel.find({ id: Number(id), start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
+            var dayData = await HkrlModel.find({ id: {$in:ids}, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
                 dayData.forEach(res =>{
                     var limitTime = dtime(res.start_time).format('HH')
                     if (limitTime >= minTime && limitTime < maxTime) {
                         dayAllData.push(res)
                     }
                 })
-            }
             var data = {}
             for (var i = 0; i < dayAllData.length; i++) {
                     var time = dtime(dayAllData[i].start_time).format('YYYY-MM-DD')
@@ -90,12 +86,15 @@ class HKRL {
             return finalArr
         }else if(dimension == '2'){
             var dayAllDate = []
-            for (var id of ids) {
+            var idArr = []
+            for(var id of ids){
+                idArr.push(Number(id))
+            }
             var dayDate = await HkrlModel.aggregate(
                 {
                     $match: {
-                        id: Number(id),
-                        start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') }
+                        id: {$in:idArr},
+                        start_time: { $gte: dtime(from_time).format('YYYY-MM-DD'), $lt: dtime(to_time).format('YYYY-MM-DD') }
                     }
                 },
                 {
@@ -124,7 +123,6 @@ class HKRL {
             dayDate.forEach(res =>{
              dayAllDate.push(res) 
             })
-        }
             var data = {}
             for (var i = 0; i < dayAllDate.length; i++) {
                     var time = this.getWeekOfYear(dtime(dayAllDate[i].start_time).format('YYYY-MM-DD'))
@@ -152,11 +150,14 @@ class HKRL {
             return finalArr
         }else{
             var dayAllDate = []
-            for (var id of ids) {
+            var idArr = []
+            for(var id of ids){
+                idArr.push(Number(id))
+            }
             var dayDate = await HkrlModel.aggregate(
                 {
                     $match: {
-                        id: Number(id),
+                        id: {$in:idArr},
                         start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') }
                     }
                 },
@@ -186,7 +187,6 @@ class HKRL {
             dayDate.forEach(res =>{
                 dayAllDate.push(res)
             })
-        }
             var data = {}
             for (var i = 0; i < dayAllDate.length; i++) {
                     var time = dayAllDate[i].start_time
@@ -233,15 +233,13 @@ class HKRL {
         var minTime = dtime(from_time).format('HH')
         var maxTime = dtime(to_time).format('HH')
         var dayAllData = []
-        for(var id of ids){
-            var dayData = await HkrlModel.find({ id: Number(id), start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
+            var dayData = await HkrlModel.find({ id: {$in:ids}, start_time: { $gte: dtime(from_time).format('YYYY-MM-DD HH:mm:ss'), $lt: dtime(to_time).format('YYYY-MM-DD HH:mm:ss') } })
             dayData.forEach(res =>{
                     var limitTime = dtime(res.start_time).format('HH')
                     if (limitTime >= minTime && limitTime < maxTime) {
                         dayAllData.push(res)
                     }
             })
-        }
         var data = {}
             for (var i = 0; i < dayAllData.length; i++) {
                     var time = dtime(dayAllData[i].start_time).format('YYYY-MM-DD')

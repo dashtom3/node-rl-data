@@ -4,10 +4,13 @@ import axios from 'axios'
 import qs from 'qs'
 import formidable from 'formidable'
 import dtime from 'time-formater'
+import schedule from 'node-schedule';
 class Archive {
     constructor() {
         this.getDataByHour = this.getDataByHour.bind(this)
+        // schedule.scheduleJob('30 * * * * *',()=>{
         // this.getDataEveryDay(dtime(new Date() - 24 * 60 * 60 * 1000).format('YYYY-MM-DD'), dtime(new Date() - 24 * 60 * 60 * 1000).format('YYYY-MM-DD'), '10,30,60')
+        // }); 
         console.log(dtime(new Date() - 24 * 60 * 60 * 1000).format('YYYY-MM-DD'))
     }
     //热区驻足分时段数据
@@ -96,7 +99,7 @@ class Archive {
                     i = i + 24 * 3600 * 1000
                 }
             }
-            console.log(allTimeData.length)
+            console.log(allTimeData)
         } catch (err) {
             console.log(err)
         }
