@@ -7,7 +7,7 @@ import schedule from 'node-schedule';
 import hkdl from './hkdl'
 class Main{
     constructor(analyse,archive) {
-        this.analyse = analyse
+        // this.analyse = analyse
         this.archive = archive
     }
     startAnalyse(){

@@ -7,7 +7,7 @@ class HKRL {
 
     }
     async getDataRLByHour(deviceIds, from_time, to_time, dimension) {
-        console.log(deviceIds, from_time, to_time, dimension)
+        // console.log(deviceIds, from_time, to_time, dimension)
         var ids = deviceIds.split(',')
         var minTime = Number(from_time.substring(11,13))
         var maxTime = Number(to_time.substring(11,13))

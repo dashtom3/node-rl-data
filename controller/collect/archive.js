@@ -8,7 +8,7 @@ import schedule from 'node-schedule';
 class Archive {
     constructor() {
         this.getDataByHour = this.getDataByHour.bind(this)
-        // schedule.scheduleJob('30 * * * * *',()=>{
+        // schedule.scheduleJob('0 0 5 * * *',()=>{
         // this.getDataEveryDay(dtime(new Date() - 24 * 60 * 60 * 1000).format('YYYY-MM-DD'), dtime(new Date() - 24 * 60 * 60 * 1000).format('YYYY-MM-DD'), '10,30,60')
         // }); 
         console.log(dtime(new Date() - 24 * 60 * 60 * 1000).format('YYYY-MM-DD'))
@@ -92,14 +92,14 @@ class Archive {
                                 staySecond: t,
                                 stayPeopleCount: single.stayPeopleCount
                             }
-                            //   ArchiveModel.create(params)
-                            allTimeData.push(params)
+                              ArchiveModel.create(params)
+                            // allTimeData.push(params)
                         })
                     })
                     i = i + 24 * 3600 * 1000
                 }
             }
-            console.log(allTimeData)
+            // console.log(allTimeData.length)
         } catch (err) {
             console.log(err)
         }

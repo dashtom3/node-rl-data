@@ -1,42 +1,18 @@
 'use strict';
 const puppeteer = require('puppeteer');
 const devices = require('puppeteer/DeviceDescriptors'); 
-const baseUrl = 'http://localhost:8080/'
-class PDF{
+const baseUrl = 'http://116.62.228.3:8089/'
+class PDF {
     constructor(){
-        this.screenShot = this.screenShot.bind(this)
-        this.exportPDF = this.exportPDF.bind(this)
+
     }
     async exportPDF(req,res,next){
         const {id,from_time,to_time} = req.query
-        try{
-            console.log(id,from_time,to_time)
-           await this.screenShot(id,from_time,to_time)
-            res.send({
-                status:1,
-                data:1,
-            })
-        }catch(e){
-            res.send({
-                status:0,
-                data:0,
-            })
-        }
-    }
-    async download(req,res,next){
-        try{
-            res.download('public/数据报告.pdf')
-        }catch(e){
-            res.send({
-                status:0,
-                data:0
-            })
-        }
-    }
-    async screenShot(id,from_time,to_time){
-        // 启动Chromium
+            console.log(id,from_time,to_time,new Date())
+                // 启动Chromium
+    try {
     // const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless:false, args: ['--no-sandbox']});
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({headless:true,args: ['--no-sandbox', '--disable-setuid-sandbox']})
     // 打开新页面
     const page = await browser.newPage();
     // 设置页面分辨率
@@ -85,10 +61,9 @@ class PDF{
 
         }, scrollStep, max_height_px, height_limit);
 
-        await this.sleep(5000);
-    }
-
-    try {
+        // await this.sleep(5000);
+        await page.waitFor(3000);
+            }
         await page.emulateMedia('screen')
         await page.pdf({printBackground:true,width:1940,height:15600,margin:{left:0,right:0},path:'public/'+'数据报告.pdf'}).catch(err =>{
             console.log('导出失败')
@@ -96,22 +71,31 @@ class PDF{
         await page.waitFor(1000);
         await browser.close();
         console.log('导出完成')
-        } 
-    catch (e) {
-            console.log('执行异常');
+        res.send({
+            status:1,
+            data:1,
+        })
+        }catch (e) {
+            console.log(e);
+            res.send({
+                status:0,
+                data:0,
+            })
             }
     }
+    async download(req,res,next){
+        try{
+            res.download('public/数据报告.pdf')
+        }catch(e){
+            res.send({
+                status:0,
+                data:0
+            })
+        }
+    }
     //延时函数
- sleep(delay) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            try {
-                resolve(1)
-            } catch (e) {
-                reject(0)
-            }
-        }, delay)
-    })
-}
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(() => resolve(), ms));
+    }
 }
 export default new PDF()
